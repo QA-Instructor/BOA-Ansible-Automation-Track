@@ -238,13 +238,14 @@ By the end of this lab, you will have:
 ```shell     
 cd ~/Labs/PY02
 ```
-and expand this directory in the VS Code file explorer.
+Expand this directory in the VS Code file explorer.
+
 3. Setup a new virtual environment for the project:
 ```shell     
 python3 -m venv venv     
 source venv/bin/activate
 ```
-Open the main.py file, which contains a basic placeholder script: 
+Open the **main.py** file, which contains a basic placeholder script: 
 ```python
 #! venv/bin/python3
 if __name__ == '__main__':
@@ -285,7 +286,7 @@ Does it behave as expected?
 ##### Implement error handling
 6. This simple game loop is a good starting point, but has possible failure points. Consider for example the cast to an integer. If the provided input cannot be parsed as an integer a ValueError exception will be thrown. This could crash the program. 
 
-7. Add some error handling for this case using try ... except ...
+7. Add some error handling for this case using _try ... except ..._
 ```python
 #! venv/bin/python3
 from random import randint
@@ -408,7 +409,7 @@ You will see the function signature displayed as you have not yet added any docu
 
 def calculate_total(subtotal: float, rate: float = 20) -> float: # add the type hints on this line, and the following multi-line string
     '''
-    calcluate total amount, given subtotal and vat rate
+    calculate total amount, given subtotal and vat rate
     vat rate should be provided as a percentage
     >>> calculate_total(100, 20)
     120.0
@@ -539,7 +540,7 @@ Call this function with the following arguments:
 - (5000, 10000) as the **port_range**
 
 <details>
-<summary>Show PY03 Solution</summary>
+<summary>Show PY04 Solution</summary>
 
 ```python
 #! venv/bin/python3
@@ -575,7 +576,7 @@ if __name__ == '__main__':
 - write the contents of the validation results to a file
 
 <details>
-<summary>Show PY04 Part 1 Solution</summary>
+<summary>Show PY04 Part 2 Solution</summary>
 
 ```python
 #! venv/bin/python3
@@ -608,7 +609,7 @@ def validate_pod(pod, prefix, port_range):
 8. You should also update the main block so that the output directs the user as to where to find detailed results:
 
 <details>
-<summary>Show PY04 Part 2 Solution</summary>
+<summary>Show PY04 Part 3 Solution</summary>
 
 ```python
 if __name__ == '__main__':
@@ -747,7 +748,7 @@ if __name__ == '__main__':
 14. Running the script again should show the book now created.
 
 ##### Make PUT and DELETE requests
-Now that you have a book object to work with, ypu should try using some other request methods
+Now that you have a book object to work with, you should try using some other request methods
 
 15. First, edit your script to use a PUT request to update the existing book object:
 ```python
@@ -853,7 +854,9 @@ if __name__ == '__main__':
 
 ##### Improve the retry logic
 The retry logic you have just implemented has several weaknesses that you would want to avoid in reality. For a start, what if the server never delivers a successful response? You ideally should have some condition under which the client gives up attempting the request and reports a failure.  
+
 Additionally, if the server is unavailable due to traffic saturation, this infinite loop of rapid-fire requests will only make matters worse.  
+
 For these reasons, you will enhance your script to use a more robust retry methodology: _exponential backoff with timeout_. In this method, an exponentially increasing delay is added between attempts, to give the server time to return to a healthy state before the next retry, and a timeout is used to break out of the retry loop after so many failed requests.
 
 9. Edit **retry.py** like so:
@@ -1084,6 +1087,13 @@ if __name__ == '__main__':
 #### Optional Stretch Tasks
 - amend the script to also retrieve any author and review data from the API server, and process that. 
 - stretch goal 1 will require adding additional calls to requests - investigate the use of the `aiohttp` library to make these requests asynchronously as well
+
+#### Tidy Up
+In ~/Labs/PY05 tear down the Flask application that what built and run with docker compose:
+
+```shell
+sudo docker compose down
+```
 
 ## PY08
 ### Lab PY08 - Introduction to the Sandbox API
