@@ -1188,7 +1188,7 @@ def get_operations(id: UUID, response: Response, authorization: Annotated[HTTPAu
 
 The API will now automatically reject, with a 403, any request which does not present a bearer token. Note that the validity of any presented token is not yet being validated, only that one has been presented.
 
-10. Save the changes to restart the API and test it via the swagger UI. Note that there is now an 'Authenticate' button on the UI. This will allow you to add an appropriate credential which will be used when making the requests.
+10. Save the changes to restart the API and test it via the swagger UI. Note that there is now an 'Authorize' button on the UI. This will allow you to add an appropriate credential which will be used when making the requests.
 
 #### Optional Stretch Tasks
 - Expand auth.py to read a set of valid tokens in from a file, and provide a helper function to check whether a token is valid. Add logic to each of your handler functions to call this function on the token presented as part of a request.
@@ -1281,7 +1281,7 @@ provider "google" {
     region = "us-east1"
 }
 ```
-see the [google provider documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs) for details on more configuration options
+See the [google provider documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs) for details on more configuration options
 
 3. Once you have set up the provider configuration, run:
 ```shell
@@ -1289,7 +1289,7 @@ terraform init
 ```
 At this point, Terraform will install the provider, as well as initialising a few other things, some of which you will see later
 
-4. Review the [documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) for the google_compute_instance resource type. Add, to the instance.tf file, a block defining a VM with the following configuration:
+4. Review the [documentation](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance) for the google_compute_instance resource type. Add, to the **instance.tf** file, a block defining a VM with the following configuration:
 * name: demo-instance-1
 * machine type: e2-medium
 * zone: us-east1-b
@@ -1338,11 +1338,11 @@ terraform apply
 ```
 Enter 'yes' to confirm the apply when prompted.  
 
-6. Once the apply is complete, navigate to the Compute Engine > VM Instances. You should see a new VM instance.
+6. Once the apply is complete, navigate to **Compute Engine > VM Instances**. You should see a new VM instance.
 7. Review the newly-created _terraform.tfstate_ file. This is how Terraform tracks the resources that it is managing.
 8. Destroy the VM: `terraform destroy` (entering 'yes' to confirm destruction when prompted)
 9. Review the tfstate file again - note that it now contains no resources, as the instance has been deleted
-10. Before moving on, comment out the contents of the **instance.tf** file . In VS Code editor, add a multi-line comment character to line 1 '/\*' and add a closing mulit-line comment character to the last line of the file '*/'
+10. Before moving on, comment out the contents of the **instance.tf** file . In VS Code editor, add a multi-line comment character to line 1 '/\*' and add a closing multi-line comment character to the last line of the file '*/'
 
 ##### Deploying the network
 11. You will now redeploy your instance, but onto a custom network. Open the **network.tf** file, and add the following resources:
@@ -1801,6 +1801,7 @@ This will eventually change what NGINX presents.
   tasks: []
 ```
 This defines a single, currently empty _play_, targeting the local machine. A play is made up of _tasks_, which are the individual configuration actions required by the play. A _playbook_ can define one or more plays.
+
 4. With reference to the documentation for the [apt](https://docs.ansible.com/projects/ansible/latest/collections/ansible/builtin/apt_module.html) module, add a task to this play which installs nginx - i.e. the same outcome as you acheived with the ad-hoc command previously. See the solution below if required.
 
 <details>
@@ -1880,7 +1881,6 @@ Refer to the docs for the [copy](https://docs.ansible.com/projects/ansible/lates
     copy:
       src: nginx.conf
       dest: /etc/nginx/nginx.conf
-    register: nginx_config
 
   - name: Restart nginx if needed
     service:
@@ -1912,8 +1912,15 @@ Hello new nginx
 ```
 10. Run the playbook again. Notice that, even though nothing has changed, NGINX still gets restarted. 
 
-This can be improved upon by adding a condition to the task that restarts NGINX to only execute when the copy task changes something. Amend the restart nginx task like so:
+This can be improved upon by adding a condition to the task that restarts NGINX to only execute when the copy task changes something. Amend the nginx tasks like so:
 ```yaml
+
+  - name: Copy nginx file over
+    copy:
+      src: nginx.conf
+      dest: /etc/nginx/nginx.conf
+    register: nginx_config # add this line
+
   - name: Restart nginx if needed
     service:
       name: nginx
@@ -2024,7 +2031,7 @@ ansible-playbook -v -i inventory.yml test_playbook.yml
 ```
 The `-i` command is used to pass the inventory file.
 
-The `-v` command is used to cause Ansible to print moire debug messages.
+The `-v` command is used to cause Ansible to print more debug messages.
 
 You should see output similar to the following, indicating that Ansible was able to connect successfully to the hosts configured in the inventory file:
 
@@ -2545,21 +2552,22 @@ terraform apply
 9. Switch back into the ansible directory. Edit the **ansible.cfg** file:
 ```ini
 [defaults]
-    remote_user = ansible
-    private_key_file = ~/ansible_key
-    callbacks_enabled = timer, profile_tasks, profile_roles
-    fact_caching = jsonfile # <- add this and next two lines
-    fact_caching_timeout = 3600
-    fact_caching_connection = facts.d
+  remote_user=ansible
+  private_key_file=~/ansible_key
+  callbacks_enabled = timer, profile_tasks, profile_roles
+  fact_caching = jsonfile # <- add this and next three lines
+  fact_caching_prefix = ansible_facts_
+  fact_caching_timeout = 3600
+  fact_caching_connection = facts.d
 
 [ssh_connection]
-    ssh_args = -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+  ssh_args="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null"
 
 [inventory] # <- add this section
-    cache = true
-    cache_plugin = jsonfile
-    cache_timeout = 3600
-    cache_connection = inventory.d
+  cache = true
+  cache_plugin = jsonfile
+  cache_timeout = 3600
+  cache_connection = inventory.d
 ```
 These changes have enabled two kinds of caching. _Fact caching_, will reduce the amount of time spent gathering facts during playbook execution. _Inventory caching_ will prevent ansible from having to regenerate the inventory via the plugin on every run. 
 
@@ -2591,18 +2599,20 @@ Another source of performance issues can be the time taken to establish SSH conn
 15. Before re-invoking the playbook, edit **ansible.cfg**, like so:
 ```ini
 [defaults]
-  remote_user = ansible
-  private_key_file = ~/ansible_key
+  remote_user=ansible
+  private_key_file=~/ansible_key
   callbacks_enabled = timer, profile_tasks, profile_roles
   fact_caching = jsonfile
+  fact_caching_prefix = ansible_facts_
   fact_caching_timeout = 3600
   fact_caching_connection = facts.d
 
 [ssh_connection]
-  ssh_args = -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=90s # <- add extra arguments to this line
+  ssh_args = "-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ControlMaster=auto -o ControlPersist=90s"
+   # <- add extra arguments to above line
   pipelining = True # <- add this line
 
-[inventory]
+[inventory] # <- add this section
   cache = true
   cache_plugin = jsonfile
   cache_timeout = 3600
