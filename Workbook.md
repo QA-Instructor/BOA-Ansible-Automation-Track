@@ -2689,7 +2689,7 @@ ansible-playbook playbook.yml
 ```
 
 ##### Secure the Credential
-Having a hardcoded password in the playbook like this is a problem, especially if you want to share that playbook with others. Alternativelt, simply passing the value as a variable on the command line is not an ideal solution either, as this leaves the sensitive credential potentially exposed via command history. Instead, a better approach would be to use _ansible-vault_ to encrypt the data at rest, and retrieve it during playbook execution. 
+Having a hardcoded password in the playbook like this is a problem, especially if you want to share that playbook with others. Alternatively, simply passing the value as a variable on the command line is not an ideal solution either, as this leaves the sensitive credential potentially exposed via command history. Instead, a better approach would be to use _ansible-vault_ to encrypt the data at rest, and retrieve it during playbook execution. 
 
 5. Create a new vault file:
 ```bash
@@ -2790,7 +2790,7 @@ Other requests to other endpoints will be similar
 ##### Tidy Up
 - Stop the sample API:
 ```bash
-sudo ss -tap | grep 5000 || sudo sh -c "docker compose -f ~/Labs/PY05/compose.yml down -d"
+sudo ss -tap | grep 5000 || sudo sh -c "docker compose -f ~/Labs/PY05/compose.yml down"
 ```
 Note: this path may be incorrect. Try `/home/qa/Labs/PY05/compose.yml`
 
@@ -2802,7 +2802,7 @@ Create a job in AWX to manage scheduled ansible executions
 
 #### Outcomes
 By the end of this lab, you will have:
-* deployed an AWX cluster
+* Deployed an AWX cluster
 * Configured credentials in AWX
 * Configured an AWX job to run scheduled maintenance activities
 
@@ -2924,7 +2924,7 @@ By the end of this lab, you will have:
 
 #### High-Level Steps
 * Deploy Hashicorp vault
-* move an SSH key into vault
+* Move an SSH key into vault
 * Reconfigure AWX jobs to read credentials from vault
 
 #### Detailed Steps
@@ -3018,7 +3018,7 @@ cd ~/Labs/PY09
 ```
 Expand this directory in the VSCode explorer.  
 
-2. Create and inintialise a new virtual environment:
+2. Create and initialise a new virtual environment:
 ```bash
 python3 -m venv venv
 source venv/bin/activate
@@ -3276,6 +3276,7 @@ By the end of this lab, you will have:
 cd ~
 python3 -m venv ansible-venv
 ansible-venv/bin/pip3 install ansible pytest pytest-cov pytest-xdist requests
+
 alias "ansible-test"="/home/qa/ansible-venv/bin/python3 -m ansible test"
 echo !! | tee -a ~/.bashrc
 ```
@@ -3477,7 +3478,7 @@ def test_api_post():
 ```
 Explanation: You first import the sandbox module you just created, as well as some key utilities from unittest: `patch`, which you have already seen, and `MagicMock`, a base class for creating mock objects.  
 
-In the `test_api_post` test, you create a MagicMock object to mock the module that needs to be passed to the API client, setting a params field holding a dictionary containing sample data. You also define a function which simulates the behaviour of a post request: `make_post`, returning a mock object with a status code of 202 and whatever JSON was passed to the function.  
+In the `test_api_post` test, you create a MagicMock object to mock the module that needs to be passed to the API client, setting a params field holding a dictionary containing sample data. You also define a function which simulates the behaviour of a post request: `mock_post`, returning a mock object with a status code of 202 and whatever JSON was passed to the function.  
 
 Finally, you patch the requests module, replacing `requests.post` with your own _mock_ function. You then initialise an API client, call the `make_request` function with the `POST` method, and make the following assertions:
   * You receive a 202 ACCEPTED status code
